@@ -12,6 +12,7 @@ local gui = require("windowmanager/libs/guiElements")
 -- local state for running the program
 local screenWidth, _ = gpu.getResolution()
 local isRunning = false
+local isShuttingDown = false
 local configuredMobToSpawn = 1
 local machineStatusMessage = "Idle"
 local loggerMessageCount = 1
@@ -271,10 +272,11 @@ function transferMatter(device, matter, total, stack)
 end
 
 function doShutdown(theThread)
+  isRunning = false
+  isShuttingDown = true
+
   setMachineStatus("Stopping")
   setStartStopButtonState(true)
-
-  isRunning = false
 
   -- Stop the spawner thread
   addLoggerMessage("Shutting down gracefully.")
@@ -288,16 +290,18 @@ function doShutdown(theThread)
   addLoggerMessage("Graceful shutdown complete.")
 
   setMachineStatus("Idle")
+  isShuttingDown = false
 end
 
 function doAbort(theThread)
   local device = config.components.syringe
   local itemStack = getSyringeItemStackForMob(nil)
 
+  isRunning = false
+  isShuttingDown = true
+
   setMachineStatus("Aborting (all transferred material will be disposed of)")
   setStartStopButtonState(true)
-
-  isRunning = false
 
   stopThread(theThread, false)
 
@@ -310,6 +314,7 @@ function doAbort(theThread)
 
   setTemporaryMachineStatus("Aborted successfully!", config.ui.messageTypes.info)
   setMachineStatus("Idle")
+  isShuttingDown = false
 end
 
 function emptyMatterBeamers()
@@ -378,6 +383,7 @@ end
 -- UI CALLBACKS
 --------------------------------------------------------------------------------
 function mobSelectionCallback1(self, win)
+  if (isShuttingDown) then return end
   local picked = gui.getElementSelected(self)
 
   if (picked == configuredMobToSpawn) then return end
@@ -390,6 +396,7 @@ function mobSelectionCallback1(self, win)
 end
 
 function mobSelectionCallback2(self, win)
+  if (isShuttingDown) then return end
   local picked = gui.getElementSelected(self)
 
   if (picked == configuredMobToSpawn) then return end
@@ -402,6 +409,7 @@ function mobSelectionCallback2(self, win)
 end
 
 function mobSelectionCallback3(self, win)
+  if (isShuttingDown) then return end
   local picked = gui.getElementSelected(self)
 
   if (picked == configuredMobToSpawn) then return end
@@ -414,6 +422,7 @@ function mobSelectionCallback3(self, win)
 end
 
 function startStopButtonCallback(self, win)
+  if (isShuttingDown) then return end
   if (not isRunning) then
     -- Start the machine; Set the start/stop button to stop state
     local mob = availableMobs[configuredMobToSpawn]
@@ -424,9 +433,11 @@ function startStopButtonCallback(self, win)
       while (isRunning) do
         isRunning = spawnMobs(configuredMobToSpawn)
       end
+      isShuttingDown = true
       setTemporaryMachineStatus("An error has occurred causing spawning to stop!", config.ui.messageTypes.error)
       setMachineStatus("Idle")
       setStartStopButtonState(true)
+      isShuttingDown = false
     end)
   else
     -- Stop the machine; Set the start/stop button to start state
@@ -437,6 +448,7 @@ function startStopButtonCallback(self, win)
 end
 
 function abortButtonCallback(self, win)
+  if (isShuttingDown) then return end
   if (not isRunning) then
     setTemporaryMachineStatus("Machine not currently running!", config.ui.messageTypes.error)
   else
