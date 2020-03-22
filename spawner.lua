@@ -431,7 +431,7 @@ function startStopButtonCallback(self, win)
     setMachineStatus("Spawning " .. mob.mobName .. " in batches of " .. getBatchSize(mob) .. ".")
     spawningThread = thread.create(function()
       while (isRunning) do
-        isRunning = spawnMobs(configuredMobToSpawn)
+        if (not spawnMobs(configuredMobToSpawn)) then isRunning = false end
       end
       isShuttingDown = true
       setTemporaryMachineStatus("An error has occurred causing spawning to stop!", config.ui.messageTypes.error)
