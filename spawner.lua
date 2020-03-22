@@ -13,7 +13,6 @@ local gui = require("windowmanager/libs/guiElements")
 local screenWidth, _ = gpu.getResolution()
 local isRunning = false
 local configuredMobToSpawn = 1
-local batchSize = 10
 local machineStatusMessage = "Idle"
 local loggerMessageCount = 1
 local loggerSelectedLine = 1
@@ -112,7 +111,7 @@ function setConfigDisplayForMob(choice)
   local mobConfig = availableMobs[choice]
 
   gui.setElementText(mobLabel, mobConfig.mobName)
-  gui.setElementText(batchSizeLabel, mobConfig.mobsPerKeyMatter)
+  gui.setElementText(batchSizeLabel, getBatchSize(mobConfig))
   gui.setElementText(keyMatterLabel, mobConfig.matter.key.name)
   gui.setElementText(bulkMatterLabel, mobConfig.matter.bulk.name)
 
@@ -154,6 +153,10 @@ function addLoggerMessage(text)
   gui.drawElement(loggerWindow, loggerList)
 end
 
+function getBatchSize(mob)
+  return math.floor(1/mob.matter.key.amount)
+end
+
 --------------------------------------------------------------------------------
 -- SPAWNER METHODS
 --------------------------------------------------------------------------------
@@ -174,9 +177,10 @@ function spawnMobs(choice)
   local bulkStack = mob.matter.bulk.amount / bulkMultiplier
   local livingStack = mob.matter.living.amount / livingMultiplier
 
-  local keyTotal = mob.mobsPerKeyMatter * keyStack
-  local bulkTotal = mob.mobsPerKeyMatter * bulkStack
-  local livingTotal = mob.mobsPerKeyMatter * livingStack
+  local batchSize = getBatchSize(mob)
+  local keyTotal = batchSize * keyStack
+  local bulkTotal = batchSize * bulkStack
+  local livingTotal = batchSize * livingStack
 
   if (not transferMatter(config.components.matter.key, mob.matter.key, keyTotal, keyStack)) then
     return false
@@ -274,7 +278,7 @@ function doShutdown(theThread)
 
   -- Stop the spawner thread
   addLoggerMessage("Shutting down gracefully.")
-  addLoggerMessage("Finishing this current batch of " .. availableMobs[configuredMobToSpawn].mobsPerKeyMatter .. " mobs.")
+  addLoggerMessage("Finishing this current batch of " .. getBatchSize(availableMobs[configuredMobToSpawn]) .. " mobs.")
   stopThread(theThread, true)
   addLoggerMessage("Batch finished spawning.")
 
@@ -415,7 +419,7 @@ function startStopButtonCallback(self, win)
     local mob = availableMobs[configuredMobToSpawn]
     setStartStopButtonState(false)
     isRunning = true
-    setMachineStatus("Spawning " .. mob.mobName .. " in batches of " .. mob.mobsPerKeyMatter .. ".")
+    setMachineStatus("Spawning " .. mob.mobName .. " in batches of " .. getBatchSize(mob) .. ".")
     spawningThread = thread.create(function()
       while (isRunning) do
         isRunning = spawnMobs(configuredMobToSpawn)
@@ -573,7 +577,7 @@ batchSizeHeader = gui.newLabel(2, y, _winSize(screenWidth, 0.09), 1, "BATCH SIZE
 setLabelHeaderFormat(batchSizeHeader)
 
 y = y + 2
-batchSizeLabel = gui.newLabel(2, y, _winSize(screenWidth, 0.09), 1, batchSize)
+batchSizeLabel = gui.newLabel(2, y, _winSize(screenWidth, 0.09), 1, getBatchSize(availableMobs[configuredMobToSpawn]))
 gui.setElementAlignment(batchSizeLabel, "center")
 
 y = y + 2
