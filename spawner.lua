@@ -179,16 +179,18 @@ function spawnMobs(choice)
   local livingTotal = mob.mobsPerKeyMatter * livingStack
 
   if (not transferMatter(config.components.matter.key, mob.matter.key, keyTotal, keyStack)) then
-    doAbort(spawningThread)
+    return false
   end
 
   if (not transferMatter(config.components.matter.bulk, mob.matter.bulk, bulkTotal, bulkStack)) then
-    doAbort(spawningThread)
+    return false
   end
 
   if (not transferMatter(config.components.matter.living, mob.matter.living, livingTotal, livingStack)) then
-    doAbort(spawningThread)
+    return false
   end
+
+  return true
 end
 
 function transferMatter(device, matter, total, stack)
@@ -416,8 +418,11 @@ function startStopButtonCallback(self, win)
     setMachineStatus("Spawning " .. mob.mobName .. " in batches of " .. mob.mobsPerKeyMatter .. ".")
     spawningThread = thread.create(function()
       while (isRunning) do
-        spawnMobs(configuredMobToSpawn)
+        isRunning = spawnMobs(configuredMobToSpawn)
       end
+      setTemporaryMachineStatus("An error has occurred causing spawning to stop!", config.ui.messageTypes.error)
+      setMachineStatus("Idle")
+      setStartStopButtonState(true)
     end)
   else
     -- Stop the machine; Set the start/stop button to start state

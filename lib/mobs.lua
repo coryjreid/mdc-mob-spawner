@@ -43,6 +43,28 @@ local mobs = {
         amount = 30
       }
     }
+  },
+  [3] = {
+    mobName = "Wither Skeleton",
+    mobId = "minecraft:wither_skeleton",
+    mobsPerKeyMatter = 10,
+    matter = {
+      key = {
+        name = "Bone",
+        id = "minecraft:bone",
+        amount = 0.1
+      },
+      bulk = {
+        name = "Netherrack",
+        id = "minecraft:netherrack",
+        amount = 0.5
+      },
+      living = {
+        name = "Carrot",
+        id = "minecraft:carrot",
+        amount = 30
+      }
+    }
   }
 }
 
