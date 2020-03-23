@@ -155,7 +155,8 @@ function addLoggerMessage(text)
 end
 
 function getBatchSize(mob)
-  return math.floor(1/mob.matter.key.amount)
+  local matter = config.components.matter
+  return (getMatterMultiplier(1, matter.key.infusion) / mob.matter.key.amount)
 end
 
 --------------------------------------------------------------------------------
@@ -170,37 +171,32 @@ function spawnMobs(choice)
   local mob = availableMobs[choice]
   local matter = config.components.matter
 
-  local keyMultiplier = getMatterMultiplier(1, matter.key.infusion)
+  local numberMobsPerKey = getBatchSize(mob)
+
   local bulkMultiplier = getMatterMultiplier(1, matter.bulk.infusion)
   local livingMultiplier = getMatterMultiplier(livingmatter[mob.matter.living.id], matter.living.infusion)
 
-  local keyStack = mob.matter.key.amount / keyMultiplier
-  local bulkStack = mob.matter.bulk.amount / bulkMultiplier
-  local livingStack = mob.matter.living.amount / livingMultiplier
+  local bulkTotal = ((numberMobsPerKey * mob.matter.bulk.amount) / bulkMultiplier)
+  local livingTotal = ((numberMobsPerKey * mob.matter.living.amount) / livingMultiplier)
 
-  local batchSize = getBatchSize(mob)
-  local keyTotal = batchSize * keyStack
-  local bulkTotal = batchSize * bulkStack
-  local livingTotal = batchSize * livingStack
-
-  if (not transferMatter(config.components.matter.key, mob.matter.key, keyTotal, keyStack)) then
+  if (not transferMatter(config.components.matter.key, mob.matter.key, 1)) then
     return false
   end
 
-  if (not transferMatter(config.components.matter.bulk, mob.matter.bulk, bulkTotal, bulkStack)) then
+  if (not transferMatter(config.components.matter.bulk, mob.matter.bulk, bulkTotal)) then
     return false
   end
 
-  if (not transferMatter(config.components.matter.living, mob.matter.living, livingTotal, livingStack)) then
+  if (not transferMatter(config.components.matter.living, mob.matter.living, livingTotal)) then
     return false
   end
 
   return true
 end
 
-function transferMatter(device, matter, total, stack)
+function transferMatter(device, matter, total)
   local remaining = math.ceil(total)
-  local amountToMove = math.floor(stack)
+  local amountToMove = math.min(64, remaining)
   local moved = 0
   local interface = device.interface
   local transposer = device.transposer
@@ -224,7 +220,7 @@ function transferMatter(device, matter, total, stack)
   end
 
   while (remaining > 0) do
-    if (remaining < 10 and remaining > 0) then amountToMove = remaining end
+    amountToMove = math.min(64, remaining)
 
     status, result = pcall(function() return interface.extractItem(itemStack, amountToMove, device.io.interface.output) end)
     if (status and result == amountToMove) then
@@ -263,7 +259,7 @@ function transferMatter(device, matter, total, stack)
       return false
     else
       -- Some kind of error from RS occurred
-      setTemporaryMachineStatus("Unknown error while moving " .. matter.name .. " into cache!", config.ui.messageTypes.error)
+      setTemporaryMachineStatus("Unknown error while moving " .. matter.name .. " into cache! Error: " .. result, config.ui.messageTypes.error)
       return false
     end
   end
@@ -430,13 +426,22 @@ function startStopButtonCallback(self, win)
     isRunning = true
     setMachineStatus("Spawning " .. mob.mobName .. " in batches of " .. getBatchSize(mob) .. ".")
     spawningThread = thread.create(function()
+      local error = false
+
       while (isRunning) do
-        if (not spawnMobs(configuredMobToSpawn)) then isRunning = false end
+        if (not spawnMobs(configuredMobToSpawn)) then
+          isRunning = false
+          error = true
+        end
       end
+
       isShuttingDown = true
-      setTemporaryMachineStatus("An error has occurred causing spawning to stop!", config.ui.messageTypes.error)
-      setMachineStatus("Idle")
-      setStartStopButtonState(true)
+      if (error) then
+        setTemporaryMachineStatus("An error has occurred causing spawning to stop!", config.ui.messageTypes.error)
+        setMachineStatus("Idle")
+        setStartStopButtonState(true)
+      end
+
       isShuttingDown = false
     end)
   else
