@@ -325,7 +325,7 @@ local mobs = {
     mobId = "minecraft:silverfish",
     matter = {
       key = {
-        name = "Silverfish",
+        name = "Iron Ingot",
         id = "minecraft:iron_ingot",
         amount = 0.05
       },
