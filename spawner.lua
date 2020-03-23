@@ -204,18 +204,18 @@ function transferMatter(device, matter, total)
   local itemStack = {name = matter.id}
 
   if (device.transposer.getSlotStackSize(device.io.transposer.output, 1) ~= 0) then
-    setTemporaryMachineStatus("A matter beamer is not empty! Contact Wrath!", config.ui.messageTypes.error)
+    setTemporaryMachineStatus("ERROR: A matter beamer is not empty! Contact Wrath!", config.ui.messageTypes.error)
     return false
   end
 
   local status, result = pcall(function() return device.interface.getItem(itemStack) end)
   if ((not status) or result == nil) then
     -- Could not find the item
-    setTemporaryMachineStatus("Unable to find " .. matter.name .. " (" .. matter.id .. ") in the RS network!", config.ui.messageTypes.error)
+    setTemporaryMachineStatus("ERROR: Unable to find " .. matter.name .. " (" .. matter.id .. ") in the RS network!", config.ui.messageTypes.error)
     return false
   elseif (result.size < amountToMove) then
     -- Too little available
-    setTemporaryMachineStatus("Not enough " .. matter.name .. " available!", config.ui.messageTypes.error)
+    setTemporaryMachineStatus("ERROR: Not enough " .. matter.name .. " available!", config.ui.messageTypes.error)
     return false
   end
 
@@ -238,28 +238,28 @@ function transferMatter(device, matter, total)
         redstone.setOutput(device.io.redstone.output, 0)
       elseif (status and result == 0) then
         -- The beamer is either full or has a different kind of item
-        setTemporaryMachineStatus("Could not move any " .. matter.name .. " into matter beamer! Error: " .. result, config.ui.messageTypes.error)
+        setTemporaryMachineStatus("ERROR: Could not move any " .. matter.name .. " into matter beamer! Error: " .. result, config.ui.messageTypes.error)
         return false
       elseif (status and result < amountToMove) then
         -- The beamer is full and there is more material to transfer
-        setTemporaryMachineStatus("Could not move " .. result .. " " .. matter.name .. " into matter beamer!", config.ui.messageTypes.error)
+        setTemporaryMachineStatus("ERROR: Could not move " .. result .. " " .. matter.name .. " into matter beamer!", config.ui.messageTypes.error)
         return false
       else
         -- Some kind of error occurred pushing into the beamer
-        setTemporaryMachineStatus("Unknown error while moving " .. matter.name .. " into matter beamer!", config.ui.messageTypes.error)
+        setTemporaryMachineStatus("ERROR: Unknown error while moving " .. matter.name .. " into matter beamer!", config.ui.messageTypes.error)
         return false
       end
     elseif (status and result == 0) then
       -- The cache is full or has a different type of item
-      setTemporaryMachineStatus("Could not move any " .. matter.name .. " into cache! Error: " .. result, config.ui.messageTypes.error)
+      setTemporaryMachineStatus("ERROR: Could not move any " .. matter.name .. " into cache! Error: " .. result, config.ui.messageTypes.error)
       return false
     elseif (status and result < amountToMove) then
       -- The cache is full and there is still material to transfer
-      setTemporaryMachineStatus("Could not move " .. result .. " " .. matter.name .. " into cache! Error: " .. result, config.ui.messageTypes.error)
+      setTemporaryMachineStatus("ERROR: Could not move " .. result .. " " .. matter.name .. " into cache! Error: " .. result, config.ui.messageTypes.error)
       return false
     else
       -- Some kind of error from RS occurred
-      setTemporaryMachineStatus("Unknown error while moving " .. matter.name .. " into cache! Error: " .. result, config.ui.messageTypes.error)
+      setTemporaryMachineStatus("ERROR: Unknown error while moving " .. matter.name .. " into cache! Error: " .. result, config.ui.messageTypes.error)
       return false
     end
   end
@@ -355,11 +355,14 @@ function configureMachineForChosenMob(choice, indexOffset)
 
   -- Do not configure if the syringe is not in the RS network
   local status, result = pcall(function() return syringe.interface.getItem(chosenMobSyringe, false, true) end)
-  if (status and result == nil) then return end
+  if (status and result == nil) then
+    setTemporaryMachineStatus("ERROR: Syringe for " .. mob.mobName .. " cannot be found in RS network!", config.ui.messageTypes.error)
+    return
+  end
 
   -- The syringe we want is in the RS network, so empty spawner
   if (not emptySpawner()) then
-    setTemporaryMachineStatus("[FATAL] Could not empty spawner! Contact Wrath!", config.ui.messageTypes.error)
+    setTemporaryMachineStatus("ERROR: Could not empty spawner! Contact Wrath!", config.ui.messageTypes.error)
     return
   end
 
@@ -372,7 +375,7 @@ function configureMachineForChosenMob(choice, indexOffset)
     setTemporaryMachineStatus("Configured for " .. mob.mobName .. " successfully!")
     setMachineStatus("Idle")
   else
-    setTemporaryMachineStatus("[FATAL] Could not add syringe to spawner! Contact Wrath! Error: " .. result, config.ui.messageTypes.error)
+    setTemporaryMachineStatus("ERROR: Could not add syringe to spawner! Contact Wrath! Error: " .. result, config.ui.messageTypes.error)
   end
 end
 --------------------------------------------------------------------------------
@@ -387,7 +390,7 @@ function mobSelectionCallback1(self, win)
   if (not isRunning) then
     configureMachineForChosenMob(picked, 0)
   else
-    setTemporaryMachineStatus("Cannot reconfigure while running!", config.ui.messageTypes.error)
+    setTemporaryMachineStatus("ERROR: Cannot reconfigure while running!", config.ui.messageTypes.error)
   end
 end
 
@@ -400,7 +403,7 @@ function mobSelectionCallback2(self, win)
   if (not isRunning) then
     configureMachineForChosenMob(picked, 18)
   else
-    setTemporaryMachineStatus("Cannot reconfigure while running!", config.ui.messageTypes.error)
+    setTemporaryMachineStatus("ERROR: Cannot reconfigure while running!", config.ui.messageTypes.error)
   end
 end
 
@@ -413,7 +416,7 @@ function mobSelectionCallback3(self, win)
   if (not isRunning) then
     configureMachineForChosenMob(picked, 36)
   else
-    setTemporaryMachineStatus("Cannot reconfigure while running!", config.ui.messageTypes.error)
+    setTemporaryMachineStatus("ERROR: Cannot reconfigure while running!", config.ui.messageTypes.error)
   end
 end
 
@@ -437,7 +440,7 @@ function startStopButtonCallback(self, win)
 
       isShuttingDown = true
       if (error) then
-        setTemporaryMachineStatus("An error has occurred causing spawning to stop!", config.ui.messageTypes.error)
+        setTemporaryMachineStatus("ERROR: An error has occurred causing spawning to stop!", config.ui.messageTypes.error)
         setMachineStatus("Idle")
         setStartStopButtonState(true)
       end
@@ -455,7 +458,7 @@ end
 function abortButtonCallback(self, win)
   if (isShuttingDown) then return end
   if (not isRunning) then
-    setTemporaryMachineStatus("Machine not currently running!", config.ui.messageTypes.error)
+    setTemporaryMachineStatus("ERROR: Machine not currently running!", config.ui.messageTypes.error)
   else
     doAbort(spawningThread)
   end
