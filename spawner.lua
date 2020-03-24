@@ -110,11 +110,13 @@ end
 
 function setConfigDisplayForMob(choice)
   local mobConfig = availableMobs[choice]
+  local keyStack = mobConfig.matter.key.getItemStack()
+  local bulkStack = mobConfig.matter.bulk.getItemStack()
 
   gui.setElementText(mobLabel, mobConfig.mobName)
   gui.setElementText(batchSizeLabel, getBatchSize(mobConfig))
-  gui.setElementText(keyMatterLabel, mobConfig.matter.key.name)
-  gui.setElementText(bulkMatterLabel, mobConfig.matter.bulk.name)
+  gui.setElementText(keyMatterLabel, keyStack.label)
+  gui.setElementText(bulkMatterLabel, bulkStack.label)
 
   gui.drawElement(configWindow, mobLabel)
   gui.drawElement(configWindow, batchSizeLabel)
@@ -169,12 +171,13 @@ end
 
 function spawnMobs(choice)
   local mob = availableMobs[choice]
+  local livingMatterStack, _, _ = mob.matter.living.getItemStack()
   local matter = config.components.matter
 
   local numberMobsPerKey = getBatchSize(mob)
 
   local bulkMultiplier = getMatterMultiplier(1, matter.bulk.infusion)
-  local livingMultiplier = getMatterMultiplier(livingmatter[mob.matter.living.id], matter.living.infusion)
+  local livingMultiplier = getMatterMultiplier(livingmatter[livingMatterStack.name], matter.living.infusion)
 
   local bulkTotal = ((numberMobsPerKey * mob.matter.bulk.amount) / bulkMultiplier)
   local livingTotal = ((numberMobsPerKey * mob.matter.living.amount) / livingMultiplier)
@@ -201,21 +204,21 @@ function transferMatter(device, matter, total)
   local interface = device.interface
   local transposer = device.transposer
   local redstone = device.redstone
-  local itemStack = {name = matter.id}
+  local itemStack, checkMetaData, checkNbtData = matter.getItemStack()
 
   if (device.transposer.getSlotStackSize(device.io.transposer.output, 1) ~= 0) then
-    setTemporaryMachineStatus("ERROR: A matter beamer is not empty! Contact Wrath!", config.ui.messageTypes.error)
+    setTemporaryMachineStatus("ERROR: A matter beamer is not empty!", config.ui.messageTypes.error)
     return false
   end
 
-  local status, result = pcall(function() return device.interface.getItem(itemStack) end)
+  local status, result = pcall(function() return device.interface.getItem(itemStack, checkMetaData, checkNbtData) end)
   if ((not status) or result == nil) then
     -- Could not find the item
-    setTemporaryMachineStatus("ERROR: Unable to find " .. matter.name .. " (" .. matter.id .. ") in the RS network!", config.ui.messageTypes.error)
+    setTemporaryMachineStatus("ERROR: Unable to find " .. itemStack.label .. " (" .. itemStack.name .. ") in the RS network!", config.ui.messageTypes.error)
     return false
   elseif (result.size < amountToMove) then
     -- Too little available
-    setTemporaryMachineStatus("ERROR: Not enough " .. matter.name .. " available!", config.ui.messageTypes.error)
+    setTemporaryMachineStatus("ERROR: Not enough " .. itemStack.label .. " available!", config.ui.messageTypes.error)
     return false
   end
 
@@ -232,34 +235,34 @@ function transferMatter(device, matter, total)
         remaining = remaining - amountToMove
         moved = amountToMove
 
-        addLoggerMessage("Beaming " .. moved .. " " .. matter.name .. " into spawner. " .. remaining .. " remaining.")
+        addLoggerMessage("Beaming " .. moved .. " " .. itemStack.label .. " into spawner. " .. remaining .. " remaining.")
         redstone.setOutput(device.io.redstone.output, 15)
         while (transposer.getSlotStackSize(device.io.transposer.output, 1) ~= 0) do os.sleep(0) end
         redstone.setOutput(device.io.redstone.output, 0)
       elseif (status and result == 0) then
         -- The beamer is either full or has a different kind of item
-        setTemporaryMachineStatus("ERROR: Could not move any " .. matter.name .. " into matter beamer! Error: " .. result, config.ui.messageTypes.error)
+        setTemporaryMachineStatus("ERROR: Could not move any " .. itemStack.label .. " into matter beamer! Error: " .. result, config.ui.messageTypes.error)
         return false
       elseif (status and result < amountToMove) then
         -- The beamer is full and there is more material to transfer
-        setTemporaryMachineStatus("ERROR: Could not move " .. result .. " " .. matter.name .. " into matter beamer!", config.ui.messageTypes.error)
+        setTemporaryMachineStatus("ERROR: Could not move " .. result .. " " .. itemStack.label .. " into matter beamer!", config.ui.messageTypes.error)
         return false
       else
         -- Some kind of error occurred pushing into the beamer
-        setTemporaryMachineStatus("ERROR: Unknown error while moving " .. matter.name .. " into matter beamer!", config.ui.messageTypes.error)
+        setTemporaryMachineStatus("ERROR: Unknown error while moving " .. itemStack.label .. " into matter beamer!", config.ui.messageTypes.error)
         return false
       end
     elseif (status and result == 0) then
       -- The cache is full or has a different type of item
-      setTemporaryMachineStatus("ERROR: Could not move any " .. matter.name .. " into cache! Error: " .. result, config.ui.messageTypes.error)
+      setTemporaryMachineStatus("ERROR: Could not move any " .. itemStack.label .. " into cache! Error: " .. result, config.ui.messageTypes.error)
       return false
     elseif (status and result < amountToMove) then
       -- The cache is full and there is still material to transfer
-      setTemporaryMachineStatus("ERROR: Could not move " .. result .. " " .. matter.name .. " into cache! Error: " .. result, config.ui.messageTypes.error)
+      setTemporaryMachineStatus("ERROR: Could not move " .. result .. " " .. itemStack.label .. " into cache! Error: " .. result, config.ui.messageTypes.error)
       return false
     else
       -- Some kind of error from RS occurred
-      setTemporaryMachineStatus("ERROR: Unknown error while moving " .. matter.name .. " into cache! Error: " .. result, config.ui.messageTypes.error)
+      setTemporaryMachineStatus("ERROR: Unknown error while moving " .. itemStack.label .. " into cache! Error: " .. result, config.ui.messageTypes.error)
       return false
     end
   end
@@ -432,9 +435,12 @@ function startStopButtonCallback(self, win)
       local error = false
 
       while (isRunning) do
+        addLoggerMessage("Starting batch.")
         if (not spawnMobs(configuredMobToSpawn)) then
           isRunning = false
           error = true
+        else
+          addLoggerMessage("Batch complete.")
         end
       end
 
@@ -605,7 +611,8 @@ keyMatterHeader = gui.newLabel(2, y, _winSize(screenWidth, 0.09), 1, "KEY MATTER
 setLabelHeaderFormat(keyMatterHeader)
 
 y = y + 2
-keyMatterLabel = gui.newLabel(2, y, _winSize(screenWidth, 0.09), 1, availableMobs[configuredMobToSpawn].matter.key.name)
+local keyStack, _, _ = availableMobs[configuredMobToSpawn].matter.key.getItemStack()
+keyMatterLabel = gui.newLabel(2, y, _winSize(screenWidth, 0.09), 1, keyStack.label)
 gui.setElementAlignment(keyMatterLabel, "center")
 
 y = y + 2
@@ -613,7 +620,8 @@ bulkMatterHeader = gui.newLabel(2, y, _winSize(screenWidth, 0.09), 1, "BULK MATT
 setLabelHeaderFormat(bulkMatterHeader)
 
 y = y + 2
-bulkMatterLabel = gui.newLabel(2, y, _winSize(screenWidth, 0.09), 1, availableMobs[configuredMobToSpawn].matter.bulk.name)
+local bulkStack, _, _ = availableMobs[configuredMobToSpawn].matter.bulk.getItemStack()
+bulkMatterLabel = gui.newLabel(2, y, _winSize(screenWidth, 0.09), 1, bulkStack.label)
 gui.setElementAlignment(bulkMatterLabel, "center")
 
 wm.addElement(configWindow, mobHeader)

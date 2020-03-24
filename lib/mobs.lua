@@ -6,16 +6,19 @@
 --  mobId = "",
 --  matter = {
 --    key = {
+--      getItemStack = function() return {}, false, false end,
 --      name = "",
 --      id = "",
 --      amount = 0.1
 --    },
 --    bulk = {
+--      getItemStack = function() return {}, false, false end,
 --      name = "",
 --      id = "",
 --      amount = 0.2
 --    },
 --    living = {
+--      getItemStack = function() return {}, false, false end,
 --      name = "Carrot",
 --      id = "minecraft:carrot",
 --      amount = 30
@@ -31,18 +34,24 @@ local mobs = {
     mobId = "minecraft:bat",
     matter = {
       key = {
-        name = "Feather",
-        id = "minecraft:feather",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:feather", label = "Feather"}, false, false
+        end,
         amount = 0.1
       },
       bulk = {
-        name = "Dirt",
-        id = "minecraft:dirt",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:dirt", label = "Dirt"}, false, false
+        end,
         amount = 0.2
       },
       living = {
-        name = "Carrot",
-        id = "minecraft:carrot",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:carrot", label = "Carrot"}, false, false
+        end,
         amount = 10
       }
     }
@@ -52,18 +61,24 @@ local mobs = {
     mobId = "thermalfoundation:basalz",
     matter = {
       key = {
-        name = "Basalz Rod",
-        id = "thermalfoundation:material:2052",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "thermalfoundation:material", damage = 2052, label = "Basalz Rod"}, true, false
+        end,
         amount = 0.1
       },
       bulk = {
-        name = "Cobblestone",
-        id = "minecraft:cobblestone",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:cobblestone", label = "Cobblestone"}, false, false
+        end,
         amount = 0.5
       },
       living = {
-        name = "Carrot",
-        id = "minecraft:carrot",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:carrot", label = "Carrot"}, false, false
+        end,
         amount = 30
       }
     }
@@ -73,18 +88,24 @@ local mobs = {
     mobId = "minecraft:blaze",
     matter = {
       key = {
-        name = "Blaze Rod",
-        id = "minecraft:blaze_rod",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:blaze_rod", label = "Blaze Rod"}, false, false
+        end,
         amount = 0.1
       },
       bulk = {
-        name = "Netherrack",
-        id = "minecraft:netherrack",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:netherrack", label = "Natherrack"}, false, false
+        end,
         amount = 0.5
       },
       living = {
-        name = "Carrot",
-        id = "minecraft:carrot",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:carrot", label = "Carrot"}, false, false
+        end,
         amount = 30
       }
     }
@@ -94,18 +115,24 @@ local mobs = {
     mobId = "thermalfoundation:blitz",
     matter = {
       key = {
-        name = "Blitz Rod",
-        id = "thermalfoundation:material:2050",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "thermalfoundation:material", damage = 2050, label = "Blitz Rod"}, true, false
+        end,
         amount = 0.1
       },
       bulk = {
-        name = "Sand",
-        id = "minecraft:sand",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:sand", label = "Sand"}, false, false
+        end,
         amount = 0.5
       },
       living = {
-        name = "Carrot",
-        id = "minecraft:carrot",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:carrot", label = "Carrot"}, false, false
+        end,
         amount = 30
       }
     }
@@ -115,18 +142,24 @@ local mobs = {
     mobId = "thermalfoundation:blizz",
     matter = {
       key = {
-        name = "Blizz Rod",
-        id = "thermalfoundation:material:2048",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "thermalfoundation:material", damage = 2048, label = "Blizz Rod"}, true, false
+        end,
         amount = 0.1
       },
       bulk = {
-        name = "Dirt",
-        id = "minecraft:dirt",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:dirt", label = "Dirt"}, false, false
+        end,
         amount = 0.5
       },
       living = {
-        name = "Carrot",
-        id = "minecraft:carrot",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:carrot", label = "Carrot"}, false, false
+        end,
         amount = 30
       }
     }
@@ -136,18 +169,24 @@ local mobs = {
     mobId = "minecraft:cave_spider",
     matter = {
       key = {
-        name = "String",
-        id = "minecraft:string",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:string", label = "String"}, false, false
+        end,
         amount = 0.1
       },
       bulk = {
-        name = "Dirt",
-        id = "minecraft:dirt",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:dirt", label = "Dirt"}, false, false
+        end,
         amount = 0.2
       },
       living = {
-        name = "Carrot",
-        id = "minecraft:carrot",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:carrot", label = "Carrot"}, false, false
+        end,
         amount = 10
       }
     }
@@ -157,18 +196,24 @@ local mobs = {
     mobId = "minecraft:chicken",
     matter = {
       key = {
-        name = "Feather",
-        id = "minecraft:feather",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:feather", label = "Feather"}, false, false
+        end,
         amount = 0.1
       },
       bulk = {
-        name = "Dirt",
-        id = "minecraft:dirt",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:dirt", label = "Dirt"}, false, false
+        end,
         amount = 0.2
       },
       living = {
-        name = "Carrot",
-        id = "minecraft:carrot",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:carrot", label = "Carrot"}, false, false
+        end,
         amount = 15
       }
     }
@@ -178,18 +223,24 @@ local mobs = {
     mobId = "minecraft:cow",
     matter = {
       key = {
-        name = "Leather",
-        id = "minecraft:leather",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:leather", label = "Leather"}, false, false
+        end,
         amount = 0.1
       },
       bulk = {
-        name = "Dirt",
-        id = "minecraft:dirt",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:dirt", label = "Dirt"}, false, false
+        end,
         amount = 0.2
       },
       living = {
-        name = "Carrot",
-        id = "minecraft:carrot",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:carrot", label = "Carrot"}, false, false
+        end,
         amount = 20
       }
     }
@@ -199,18 +250,24 @@ local mobs = {
     mobId = "minecraft:enderman",
     matter = {
       key = {
-        name = "Ender Pearl",
-        id = "minecraft:ender_pearl",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:ender_pearl", label = "Ender Pearl"}, false, false
+        end,
         amount = 0.0001
       },
       bulk = {
-        name = "End Stone",
-        id = "minecraft:end_stone",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:end_stone", label = "End Stone"}, false, false
+        end,
         amount = 0.001
       },
       living = {
-        name = "Carrot",
-        id = "minecraft:carrot",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:carrot", label = "Carrot"}, false, false
+        end,
         amount = 0.01
       }
     }
@@ -220,18 +277,24 @@ local mobs = {
     mobId = "minecraft:ghast",
     matter = {
       key = {
-        name = "Ghast Tear",
-        id = "minecraft:ghast_tear",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:ghast_tear", label = "Ghast Tear"}, false, false
+        end,
         amount = 0.1
       },
       bulk = {
-        name = "Netherrack",
-        id = "minecraft:netherrack",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:netherrack", label = "Natherrack"}, false, false
+        end,
         amount = 1.0
       },
       living = {
-        name = "Carrot",
-        id = "minecraft:carrot",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:carrot", label = "Carrot"}, false, false
+        end,
         amount = 50.0
       }
     }
@@ -241,18 +304,24 @@ local mobs = {
     mobId = "minecraft:magma_cube",
     matter = {
       key = {
-        name = "Magma Cream",
-        id = "minecraft:magma_cream",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:magma_cream", label = "Magma Cream"}, false, false
+        end,
         amount = 0.1
       },
       bulk = {
-        name = "Netherrack",
-        id = "minecraft:netherrack",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:netherrack", label = "Natherrack"}, false, false
+        end,
         amount = 0.2
       },
       living = {
-        name = "Carrot",
-        id = "minecraft:carrot",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:carrot", label = "Carrot"}, false, false
+        end,
         amount = 10.0
       }
     }
@@ -262,18 +331,24 @@ local mobs = {
     mobId = "minecraft:ocelot",
     matter = {
       key = {
-        name = "Raw Fish",
-        id = "minecraft:fish",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:fish", label = "Raw Fish"}, false, false
+        end,
         amount = 0.1
       },
       bulk = {
-        name = "Dirt",
-        id = "minecraft:dirt",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:dirt", label = "Dirt"}, false, false
+        end,
         amount = 1.0
       },
       living = {
-        name = "Carrot",
-        id = "minecraft:carrot",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:carrot", label = "Carrot"}, false, false
+        end,
         amount = 20.0
       }
     }
@@ -283,18 +358,24 @@ local mobs = {
     mobId = "minecraft:pig",
     matter = {
       key = {
-        name = "Leather",
-        id = "minecraft:leather",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:leather", name = "Leather"}, false, false
+        end,
         amount = 0.1
       },
       bulk = {
-        name = "Dirt",
-        id = "minecraft:dirt",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:dirt", label = "Dirt"}, false, false
+        end,
         amount = 0.2
       },
       living = {
-        name = "Carrot",
-        id = "minecraft:carrot",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:carrot", label = "Carrot"}, false, false
+        end,
         amount = 20
       }
     }
@@ -304,18 +385,24 @@ local mobs = {
     mobId = "minecraft:sheep",
     matter = {
       key = {
-        name = "Wool",
-        id = "minecraft:wool",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:wool", label = "Wool"}, false, false
+        end,
         amount = 0.1
       },
       bulk = {
-        name = "Dirt",
-        id = "minecraft:dirt",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:dirt", label = "Dirt"}, false, false
+        end,
         amount = 0.2
       },
       living = {
-        name = "Carrot",
-        id = "minecraft:carrot",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:carrot", label = "Carrot"}, false, false
+        end,
         amount = 20
       }
     }
@@ -325,18 +412,24 @@ local mobs = {
     mobId = "minecraft:silverfish",
     matter = {
       key = {
-        name = "Iron Ingot",
-        id = "minecraft:iron_ingot",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:iron_ingot", label = "Iron Ingot"}, false, false
+        end,
         amount = 0.05
       },
       bulk = {
-        name = "Dirt",
-        id = "minecraft:dirt",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:dirt", label = "Dirt"}, false, false
+        end,
         amount = 0.2
       },
       living = {
-        name = "Carrot",
-        id = "minecraft:carrot",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:carrot", label = "Carrot"}, false, false
+        end,
         amount = 10.0
       }
     }
@@ -346,18 +439,24 @@ local mobs = {
     mobId = "minecraft:witch",
     matter = {
       key = {
-        name = "Glass Bottle",
-        id = "minecraft:glass_bottle",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:glass_bottle", label = "Glass Bottle"}, false, false
+        end,
         amount = 0.1
       },
       bulk = {
-        name = "Dirt",
-        id = "minecraft:dirt",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:dirt", label = "Dirt"}, false, false
+        end,
         amount = 1.0
       },
       living = {
-        name = "Carrot",
-        id = "minecraft:carrot",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:carrot", label = "Carrot"}, false, false
+        end,
         amount = 30
       }
     }
@@ -367,18 +466,24 @@ local mobs = {
     mobId = "minecraft:wither",
     matter = {
       key = {
-        name = "Nether Star",
-        id = "minecraft:nether_star",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:nether_star", label = "Nether Star"}, false, false
+        end,
         amount = 0.1
       },
       bulk = {
-        name = "Soul Sand",
-        id = "minecraft:soul_sand",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:soul_sand", label = "Soul Sand"}, false, false
+        end,
         amount = 0.5
       },
       living = {
-        name = "Carrot",
-        id = "minecraft:carrot",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:carrot", label = "Carrot"}, false, false
+        end,
         amount = 100
       }
     }
@@ -388,18 +493,24 @@ local mobs = {
     mobId = "minecraft:wither_skeleton",
     matter = {
       key = {
-        name = "Bone",
-        id = "minecraft:bone",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:bone", label = "Bone"}, false, false
+        end,
         amount = 0.1
       },
       bulk = {
-        name = "Netherrack",
-        id = "minecraft:netherrack",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:netherrack", label = "Natherrack"}, false, false
+        end,
         amount = 0.5
       },
       living = {
-        name = "Carrot",
-        id = "minecraft:carrot",
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:carrot", label = "Carrot"}, false, false
+        end,
         amount = 30
       }
     }
