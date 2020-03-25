@@ -300,6 +300,33 @@ local mobs = {
     }
   },
   [11] = {
+    mobName = "Iron Golem",
+    mobId = "minecraft:villager_golem",
+    matter = {
+      key = {
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:iron_block", label = "Iron Block"}, false, false
+        end,
+        amount = 0.1
+      },
+      bulk = {
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:red_flower", label = "Poppy"}, false, false
+        end,
+        amount = 1.0
+      },
+      living = {
+        getItemStack = function()
+          -- stack object, match metadata, match nbt data
+          return {name = "minecraft:carrot", label = "Carrot"}, false, false
+        end,
+        amount = 50.0
+      }
+    }
+  },
+  [12] = {
     mobName = "Magma Cube",
     mobId = "minecraft:magma_cube",
     matter = {
@@ -326,7 +353,7 @@ local mobs = {
       }
     }
   },
-  [12] = {
+  [13] = {
     mobName = "Ocelot",
     mobId = "minecraft:ocelot",
     matter = {
@@ -353,7 +380,7 @@ local mobs = {
       }
     }
   },
-  [13] = {
+  [14] = {
     mobName = "Pig",
     mobId = "minecraft:pig",
     matter = {
@@ -380,7 +407,7 @@ local mobs = {
       }
     }
   },
-  [14] = {
+  [15] = {
     mobName = "Sheep",
     mobId = "minecraft:sheep",
     matter = {
@@ -407,7 +434,7 @@ local mobs = {
       }
     }
   },
-  [15] = {
+  [16] = {
     mobName = "Silverfish",
     mobId = "minecraft:silverfish",
     matter = {
@@ -434,7 +461,7 @@ local mobs = {
       }
     }
   },
-  [16] = {
+  [17] = {
     mobName = "Witch",
     mobId = "minecraft:witch",
     matter = {
@@ -461,7 +488,7 @@ local mobs = {
       }
     }
   },
-  [17] = {
+  [18] = {
     mobName = "Wither",
     mobId = "minecraft:wither",
     matter = {
@@ -488,7 +515,7 @@ local mobs = {
       }
     }
   },
-  [18] = {
+  [19] = {
     mobName = "Wither Skeleton",
     mobId = "minecraft:wither_skeleton",
     matter = {
